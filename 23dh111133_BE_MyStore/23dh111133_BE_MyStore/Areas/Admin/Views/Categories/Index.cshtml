@@ -7,16 +7,14 @@
 
 <h2 class="bg-success">DANH SÁCH DANH MỤC</h2>
 
-<p>
-    @Html.ActionLink("Thêm mới", "Create",null,new {@class ="btn btn-primary"})
-</p>
-<table class="table bg-info col-lg-12 col-ms-6 col-ms-3">
+
+<table class="table bg-info col-lg-12 col-ms-6">
     <tr>
-        <th class="bg-success col-lg-8 col-ms-4 col-ms-2">
+        <th class="bg-success col-lg-8 col-ms-4">
             @Html.DisplayNameFor(model => model.CategoryName)
             TÊN DANH MỤC
         </th>
-        <th class="bg-success ol-lg-4 col-ms-2 col-ms-1"></thclass="bg-success">
+        <th class="bg-success ol-lg-4 col-ms-2"></th>
     </tr>
 
 @foreach (var item in Model) {
@@ -32,3 +30,7 @@
 }
 
 </table>
+
+<p>
+    @Html.ActionLink("Thêm mới", "Create", null, new { @class = "btn btn-primary" })
+</p>
