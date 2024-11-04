@@ -4,15 +4,23 @@
     ViewBag.Title = "Index";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
-
+<head>
+    <style>
+        textarea {
+            max-width: 150px;
+            height: 150px;
+            
+        }
+    </style>
+</head>
 <h2 class="bg-success">DANH SÁCH DANH MỤC</h2>
 
 
 <table class="table bg-info col-lg-12 col-ms-6 col-ms-3">
     <tr>
+        <th class="bg-success col-md-1">Hình ảnh </th>
         <th class="bg-success col-md-3">Tên sản phẩm </th>
         <th class="bg-success col-md-2">Đơn giá</th>
-        <th class="bg-success col-md-1">Hình ảnh </th>
         <th class="bg-success col-md-2">Danh mục</th>
         <th class="bg-success col-md-4"></th>
     </tr>
@@ -20,9 +28,9 @@
 @foreach (var item in Model) {
     <tr>
         <td>@Html.DisplayFor(modelItem => item.ProductName) </td>
-        <td>@Html.DisplayFor(modelItem => item.ProductDescription)</td>
-        <td>@Html.DisplayFor(modelItem => item.ProductPrice)</td>
-        <td> @Html.DisplayFor(modelItem => item.ProductImage) </td>
+        @*<td>@Html.DisplayFor(modelItem => item.ProductDescription)</td>*@
+        @*<td><img src="@Html.DisplayFor(modelItem => item.ProductImage)"</td>*@
+        <td>@Html.DisplayFor(modelItem => item.ProductPrice) </td>
         <td> @Html.DisplayFor(modelItem => item.Category.CategoryName)</td>
 
         <td>
