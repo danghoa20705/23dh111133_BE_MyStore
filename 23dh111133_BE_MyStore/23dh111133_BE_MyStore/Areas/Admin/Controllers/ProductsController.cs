@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using _23dh111133_BE_MyStore.Models;
+using _23dh111133_BE_MyStore.Models.ViewModel;
 
 namespace _23dh111133_BE_MyStore.Areas.Admin.Controllers
 {
@@ -15,12 +16,49 @@ namespace _23dh111133_BE_MyStore.Areas.Admin.Controllers
         private MyStoreEntities db = new MyStoreEntities();
 
         // GET: Admin/Products
-        public ActionResult Index()
+        public ActionResult Index(string searchTerm,decimal? minPrice,decimal? maxPrice,string sortOrder)
         {
-            var products = db.Products.Include(p => p.Category);
-            return View(products.ToList());
-        }
+            var model = new ProductSearchVM();
+            var products = db.Products.AsQueryable();
+            //tim kiem san pham dua tren ten
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                model.SearchTerm = searchTerm;
+                products = products.Where(p =>
+                p.ProductName.Contains(searchTerm) ||
+                p.ProductDescription.Contains(searchTerm) ||
+                p.Category.CategoryName.Contains(searchTerm));
+            }
+            //tim kiem san pham dua tren gia toi thieu
+            if (minPrice.HasValue)
+            {
+                model.MinPrice= minPrice.Value;
+                products=products.Where(p =>p.ProductPrice >= minPrice.Value);
+            }
+            //tim kiem san pham dua tren gia toi da
+            if (maxPrice.HasValue)
+            {
+                model.MaxPrice= maxPrice.Value;
+                products = products.Where(p => p.ProductPrice <= maxPrice.Value);
+            }
+            //ap dung sap xep dua tren lua chon cua nguoi dung
+            switch (sortOrder)
+            {
+                case "name_asc": products=products.OrderBy(p=> p.ProductName); break;
+                case "name_desc": products = products.OrderByDescending(p => p.ProductName); break;
+                case "price_asc": products = products.OrderBy(p => p.ProductPrice); break;
+                case "price_desc": products = products.OrderByDescending(p => p.ProductPrice); break;
+                default://mac dinh tuwj sap xep theo tren
+                    products=products.OrderBy(p => p.ProductName);break;
+            }
+            model.SortOrder = sortOrder;
 
+            model.Products=products.ToList();
+            return View(model);
+
+        }
+        
+        // GET: Admin/Products/Details/5
         // GET: Admin/Products/Details/5
         public ActionResult Details(int? id)
         {
@@ -48,7 +86,7 @@ namespace _23dh111133_BE_MyStore.Areas.Admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ProductID,CategoryID,ProductName,ProductDecription,ProductPrice,ProductImage")] Product product)
+        public ActionResult Create([Bind(Include = "ProductID,CategoryID,ProductName,ProductPrice,ProductImage,ProductDescription")] Product product)
         {
             if (ModelState.IsValid)
             {
@@ -82,7 +120,7 @@ namespace _23dh111133_BE_MyStore.Areas.Admin.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ProductID,CategoryID,ProductName,ProductDecription,ProductPrice,ProductImage")] Product product)
+        public ActionResult Edit([Bind(Include = "ProductID,CategoryID,ProductName,ProductPrice,ProductImage,ProductDescription")] Product product)
         {
             if (ModelState.IsValid)
             {
@@ -119,7 +157,6 @@ namespace _23dh111133_BE_MyStore.Areas.Admin.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)
